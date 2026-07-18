@@ -19,7 +19,7 @@
                     <input type="checkbox"
                            class="neon-checkbox"
                            checked="@item.Completado"
-                           @onchange="@(() => { item.Completado = !item.Completado; if (item.Completado) OnEjercicioChanged(item.Id); })" />
+                           @onchange="@(() => ToggleEjercicio(item))" />
                     <span class="ms-2 me-2 @(item.Completado ? "text-decoration-line-through text-muted" : "text-light")">
                         @item.Nombre
                     </span>
@@ -201,11 +201,7 @@
     {
         var ejerciciosDelPlan = await GymService.GetEjerciciosByPlanAsync(planId);
 
-        foreach (var item in rutinaDelDia)
-        {
-            // Marcamos como completado solo si el ejercicio está en el plan
-            item.Completado = ejerciciosDelPlan.Any(e => e.EjercicioId == item.Id);
-        }
+        
     }
 
     async Task CargarRutinas() => rutinas = await GymService.GetRutinasAsync();
@@ -232,6 +228,30 @@
         {
             await GymService.EliminarRutinaAsync(id);
             await CargarRutinas();
+        }
+    }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // Limpiamos el estado actual
+        rutinaDelDia.ForEach(r => r.Completado = false);
+        ultimaMarca = null;
+        nuevaRutina = new() { FechaRegistro = DateTime.Now, Series = 3 };
+
+        // Recargamos según el nuevo PlanId
+        if (PlanId.HasValue)
+        {
+            await CargarPlanEspecífico(PlanId.Value);
+        }
+    }
+
+    void ToggleEjercicio(EjercicioChecklist item)
+    {
+        item.Completado = !item.Completado;
+        if (item.Completado)
+        {
+            _ = OnEjercicioChanged(item.Id); // Usamos descarte (_) para no esperar la tarea
         }
     }
 }
