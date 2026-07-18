@@ -4,6 +4,7 @@
 @using Gym26.Services
 @inject GymService GymService
 @inject IJSRuntime JS
+@inject UserSession UserSession
 
 <div class="container-fluid pt-4">
     <h3 class="text-neon mb-4">Registro de Entrenamiento</h3>
@@ -182,7 +183,8 @@
     protected override async Task OnInitializedAsync()
     {
         await CargarRutinas();
-        listaEjercicios = await GymService.GetEjerciciosAsync();
+        // Ahora (solucionado)
+        listaEjercicios = (await GymService.GetEjerciciosAsync(UserSession.UsuarioId)).ToList();
         rutinaDelDia = listaEjercicios.Select(e => new EjercicioChecklist
         {
             Id = e.Id,

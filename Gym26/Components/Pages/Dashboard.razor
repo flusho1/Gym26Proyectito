@@ -2,6 +2,7 @@
 @using Gym26.Models
 @using Gym26.Services
 @inject GymService GymService
+@inject UserSession UserSession
 
 <div class="container-fluid pt-4">
     <!-- SECCIÓN DE PRs -->
@@ -81,7 +82,7 @@
     {
         diasEntrenados = await GymService.GetDiasEntrenadosAsync();
         listaRecords = await GymService.GetRecordsPersonalesAsync();
-        listaEjercicios = (await GymService.GetEjerciciosAsync()).ToList();
+        listaEjercicios = (await GymService.GetEjerciciosAsync(UserSession.UsuarioId)).ToList();
     }
 
     async Task CargarHistorial(int id)

@@ -28,7 +28,7 @@ namespace Gym26.Services
         // En GymService.cs
         public async Task<IEnumerable<Ejercicio>> GetEjerciciosAsync(int usuarioId)
         {
-            // Filtramos por el usuario específico O los ejercicios globales (NULL)
+            // Ahora filtrás por el usuario seleccionado O por los globales (NULL)
             string sql = @"SELECT id, nombre, grupomuscular, urlgif 
                    FROM ejercicios 
                    WHERE usuarioid = @UsuarioId OR usuarioid IS NULL";
@@ -108,26 +108,29 @@ namespace Gym26.Services
             return result.ToList();
         }
 
-        public async Task<int> GuardarPlantillaCompletaAsync(string nombre, List<PlantillaDetalle> detalles)
+        public async Task GuardarPlantillaCompletaAsync(string nombre, List<PlantillaDetalle> detalles, int usuarioId)
         {
-            if (_db.State != ConnectionState.Open) _db.Open();
-            using var transaction = _db.BeginTransaction();
-            try
+            // 1. Primero insertás la cabecera de la plantilla y obtenés el nuevo ID
+            string sqlPlantilla = @"INSERT INTO plantillas (nombre, usuarioid) 
+                            VALUES (@Nombre, @UsuarioId) 
+                            RETURNING id;";
+
+            int plantillaId = await _db.QuerySingleAsync<int>(sqlPlantilla, new { Nombre = nombre, UsuarioId = usuarioId });
+
+            // 2. Luego insertás cada detalle usando el ID que acabás de crear
+            string sqlDetalle = @"INSERT INTO plantilla_detalles (plantillaid, ejercicioid, series, repeticiones) 
+                          VALUES (@PlantillaId, @EjercicioId, @Series, @Repeticiones)";
+
+            foreach (var d in detalles)
             {
-                string sqlInsertPlantilla = "INSERT INTO plantillas (nombre, usuarioid) VALUES (@Nombre, @UsuarioId) RETURNING id;";
-                int plantillaId = await _db.ExecuteScalarAsync<int>(sqlInsertPlantilla, new { Nombre = nombre, UsuarioId = _session.UsuarioId }, transaction);
-
-                string sqlInsertDetalle = "INSERT INTO plantilla_detalle (plantillaid, ejercicioid, series, repeticiones) VALUES (@PlantillaId, @EjercicioId, @Series, @Repeticiones)";
-
-                foreach (var detalle in detalles)
+                await _db.ExecuteAsync(sqlDetalle, new
                 {
-                    detalle.PlantillaId = plantillaId;
-                    await _db.ExecuteAsync(sqlInsertDetalle, detalle, transaction);
-                }
-                transaction.Commit();
-                return plantillaId;
+                    PlantillaId = plantillaId,
+                    EjercicioId = d.EjercicioId,
+                    Series = d.Series,
+                    Repeticiones = d.Repeticiones
+                });
             }
-            catch { transaction.Rollback(); throw; }
         }
 
         public async Task AplicarPlantillaAsync(int plantillaId)

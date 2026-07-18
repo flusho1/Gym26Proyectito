@@ -3,6 +3,7 @@
 @using Gym26.Services
 @using DevExpress.Blazor
 @inject GymService GymService
+@inject UserSession UserSession
 
 <h3 class="mb-4">Gestión de Ejercicios</h3>
 
@@ -42,7 +43,8 @@ else
 
     async Task CargarDatos()
     {
-        listaEjercicios = await GymService.GetEjerciciosAsync();
+        // Ahora (solucionado)
+        listaEjercicios = (await GymService.GetEjerciciosAsync(UserSession.UsuarioId)).ToList();
     }
 
     async Task OnEditModelSaving(GridEditModelSavingEventArgs e)
