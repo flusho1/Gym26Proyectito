@@ -17,6 +17,11 @@ namespace Gym26.Services
         }
 
         // --- MÉTODOS DE EJERCICIOS ---
+        public async Task<IEnumerable<Ejercicio>> GetEjerciciosAsync()
+        {
+            return await _db.QueryAsync<Ejercicio>("SELECT id, nombre, grupomuscular, urlgif FROM ejercicios");
+        }
+
         public async Task GuardarEjercicioAsync(Ejercicio nuevoEjercicio, int usuarioId)
         {
             // Asegúrate de incluir el usuarioId aquí
@@ -31,12 +36,6 @@ namespace Gym26.Services
             });
         }
 
-        public async Task<bool> AgregarEjercicioAsync(Ejercicio nuevoEjercicio)
-        {
-            const string sql = "INSERT INTO ejercicios (nombre, grupomuscular) VALUES (@Nombre, @GrupoMuscular)";
-            var result = await _db.ExecuteAsync(sql, nuevoEjercicio);
-            return result > 0;
-        }
 
         // --- MÉTODOS DE RUTINAS ---
         public async Task<IEnumerable<Rutina>> GetRutinasAsync()
