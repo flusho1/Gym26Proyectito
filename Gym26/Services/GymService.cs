@@ -65,6 +65,17 @@ namespace Gym26.Services
             return result > 0;
         }
 
+        public async Task<bool> EliminarEjercicioAsync(int id)
+        {
+            // Asegúrate de usar el nombre de la tabla correcto (ej. 'ejercicios') 
+            // y el nombre de la columna id
+            var sql = "DELETE FROM ejercicios WHERE id = @Id";
+
+            var result = await _db.ExecuteAsync(sql, new { Id = id });
+
+            return result > 0;
+        }
+
         // --- MÉTODOS DE PLANTILLAS ---
         public async Task<List<Plantilla>> GetPlantillasAsync()
         {

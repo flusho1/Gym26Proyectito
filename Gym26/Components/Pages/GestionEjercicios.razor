@@ -14,8 +14,12 @@ else
 {
     <DxGrid Data="@listaEjercicios"
             EditMode="GridEditMode.EditRow"
-            EditModelSaving="OnEditModelSaving">
+            EditModelSaving="OnEditModelSaving"
+            DataItemDeleting="OnDataItemDeleting">
+        <!-- Añade esta línea -->
         <Columns>
+            <DxGridCommandColumn Width="100px" ShowDeleteButton="true" /> <!-- Asegúrate que el botón de borrar esté habilitado -->
+            <DxGridDataColumn FieldName="Nombre" />
             <DxGridCommandColumn Width="100px" />
             <DxGridDataColumn FieldName="Nombre" />
             <DxGridDataColumn FieldName="GrupoMuscular" />
@@ -47,6 +51,19 @@ else
 
         await GymService.ActualizarEjercicioAsync(ejercicioEditado);
 
+        await CargarDatos();
+    }
+
+    async Task OnDataItemDeleting(GridDataItemDeletingEventArgs e)
+    {
+        // 1. Obtenemos el ejercicio desde el evento
+        var ejercicioAEliminar = (Ejercicio)e.DataItem;
+
+        // 2. Llamamos al servicio (asegúrate de que este método exista en GymService)
+        // Usamos el ID del ejercicio
+        await GymService.EliminarEjercicioAsync(ejercicioAEliminar.Id);
+
+        // 3. Recargamos la lista para reflejar el cambio
         await CargarDatos();
     }
 }
