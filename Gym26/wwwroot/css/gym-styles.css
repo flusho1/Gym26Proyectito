@@ -116,8 +116,21 @@ body {
 }
 
 .main-container {
-    flex-grow: 1;
-    overflow-y: auto;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/* Si tu layout es flex, asegura que en móvil sea columna */
+@media (max-width: 768px) {
+    .app-layout {
+        flex-direction: column;
+    }
+
+    .gym-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
 }
 
 #sidebar[b-m7oxgucqkq] {
@@ -129,4 +142,66 @@ body {
 
 .text-secondary{
     color:white !important;
+}
+
+
+/* --- Mejoras para Mobile --- */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+
+    /* Botones más grandes para dedos */
+    .btn-neon {
+        padding: 12px 24px;
+        font-size: 0.9rem;
+        width: 100%; /* Botón de ancho completo en móvil */
+        margin-bottom: 10px;
+    }
+
+    /* Ajustar las tarjetas para que no se sientan apretadas */
+    .card-gym {
+        padding: 1rem;
+    }
+
+    /* Ajuste de fuentes para mejor lectura en pantalla pequeña */
+    h3 {
+        font-size: 1.25rem;
+    }
+
+    h4 {
+        font-size: 1.1rem;
+    }
+}
+
+/* --- Mejoras de Checkbox (Táctil) --- */
+.neon-checkbox {
+    width: 24px !important; /* Más grande para poder tocarlo fácil */
+    height: 24px !important;
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+/* --- Estilo de Texto Minimalista --- */
+.text-neon {
+    color: var(--text-primary);
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+}
+
+
+/* Hacer las filas del Grid más altas para que sean "touch-friendly" */
+.dxbl-grid-cell {
+    padding: 12px 8px !important;
+}
+
+/* Asegurar que el ComboBox no sea demasiado pequeño */
+.dxbl-combobox, .dxbl-spin-edit {
+    height: 45px !important; /* Estándar móvil recomendado */
 }
