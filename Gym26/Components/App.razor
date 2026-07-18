@@ -23,14 +23,17 @@
     <Routes @rendermode="InteractiveServer" />
     <script src="_framework/blazor.web.js"></script>
     <script>
+        // Usamos un observer que NO destruye el elemento, solo le cambia el estilo.
+        // Esto es mucho más estable y no romperá el renderizado de Blazor.
         const observer = new MutationObserver((mutations) => {
             const licenseBox = document.querySelector('dx-license');
-            if (licenseBox) {
-                licenseBox.style.display = 'none';
-                licenseBox.remove(); // Esto lo borra del HTML completamente
+            if (licenseBox && licenseBox.style.display !== 'none') {
+                licenseBox.style.setProperty('display', 'none', 'important');
+                licenseBox.style.setProperty('visibility', 'hidden', 'important');
             }
         });
 
+        // Observamos el body para cualquier cambio
         observer.observe(document.body, { childList: true, subtree: true });
     </script>
     <script>
