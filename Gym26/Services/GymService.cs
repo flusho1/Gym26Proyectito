@@ -118,7 +118,7 @@ namespace Gym26.Services
             int plantillaId = await _db.QuerySingleAsync<int>(sqlPlantilla, new { Nombre = nombre, UsuarioId = usuarioId });
 
             
-            string sqlInsertDetalle = @"INSERT INTO plantilla_detalles (plantillaid, ejercicioid, series, repeticiones) 
+            string sqlInsertDetalle = @"INSERT INTO plantilla_detalle (plantillaid, ejercicioid, series, repeticiones) 
                                 VALUES (@PlantillaId, @EjercicioId, @Series, @Repeticiones);";
 
             foreach (var d in detalles)
