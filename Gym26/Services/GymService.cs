@@ -53,8 +53,15 @@ namespace Gym26.Services
 
         public async Task<bool> EliminarRutinaAsync(int id)
         {
+            // Usamos los nombres de columna exactos de tu tabla
             var sql = "DELETE FROM rutinas WHERE id = @Id AND usuarioid = @UsuarioId";
-            var result = await _db.ExecuteAsync(sql, new { Id = id, UsuarioId = _session.UsuarioId });
+
+            var result = await _db.ExecuteAsync(sql, new
+            {
+                Id = id,
+                UsuarioId = _session.UsuarioId
+            });
+
             return result > 0;
         }
 
