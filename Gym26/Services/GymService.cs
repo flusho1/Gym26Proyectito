@@ -172,6 +172,15 @@ namespace Gym26.Services
             return (await _db.QueryAsync<PlantillaDetalle>("SELECT * FROM plantilla_detalle WHERE plantillaid = @planId", new { planId })).ToList();
         }
 
+        public async Task<bool> EliminarPlanAsync(int id, int usuarioId)
+        {
+            var sql = "DELETE FROM plantillas WHERE id = @Id AND usuarioid = @UsuarioId";
+
+            var result = await _db.ExecuteAsync(sql, new { Id = id, UsuarioId = usuarioId });
+
+            return result > 0;
+        }
+
         public async Task<List<DateTime>> GetDiasEntrenadosAsync()
         {
             const string sql = "SELECT DISTINCT fecharegistro::date FROM rutinas WHERE usuarioid = @UsuarioId";
