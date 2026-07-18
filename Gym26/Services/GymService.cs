@@ -193,7 +193,13 @@ namespace Gym26.Services
 
         public async Task<List<PlantillaDetalle>> GetEjerciciosByPlanAsync(int planId)
         {
-            return (await _db.QueryAsync<PlantillaDetalle>("SELECT * FROM plantilla_detalle WHERE plantillaid = @planId", new { planId })).ToList();
+            string sql = @"
+        SELECT pd.*, e.nombre AS NombreEjercicio, e.urlgif 
+        FROM plantilla_detalle pd
+        INNER JOIN ejercicios e ON pd.ejercicioid = e.id
+        WHERE pd.plantillaid = @planId";
+
+            return (await _db.QueryAsync<PlantillaDetalle>(sql, new { planId })).ToList();
         }
 
         public async Task<bool> EliminarPlanAsync(int id, int usuarioId)
