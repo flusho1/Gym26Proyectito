@@ -110,22 +110,20 @@ namespace Gym26.Services
 
         public async Task GuardarPlantillaCompletaAsync(string nombre, List<PlantillaDetalle> detalles, int usuarioId)
         {
-            // 1. Primero insertás la cabecera de la plantilla y obtenés el nuevo ID
+            // 1. Insertar la cabecera
             string sqlPlantilla = @"INSERT INTO plantillas (nombre, usuarioid) 
                             VALUES (@Nombre, @UsuarioId) 
                             RETURNING id;";
 
             int plantillaId = await _db.QuerySingleAsync<int>(sqlPlantilla, new { Nombre = nombre, UsuarioId = usuarioId });
 
-            // 2. Luego insertás cada detalle usando el ID que acabás de crear
-            string sqlDetalle = @"SELECT pd.*, e.Nombre AS NombreEjercicio, e.UrlGif 
-               FROM plantilla_detalles pd
-               INNER JOIN ejercicios e ON pd.ejercicioid = e.id
-               WHERE pd.plantillaid = @PlanId";
+            
+            string sqlInsertDetalle = @"INSERT INTO plantilla_detalles (plantillaid, ejercicioid, series, repeticiones) 
+                                VALUES (@PlantillaId, @EjercicioId, @Series, @Repeticiones);";
 
             foreach (var d in detalles)
             {
-                await _db.ExecuteAsync(sqlDetalle, new
+                await _db.ExecuteAsync(sqlInsertDetalle, new
                 {
                     PlantillaId = plantillaId,
                     EjercicioId = d.EjercicioId,
@@ -134,7 +132,6 @@ namespace Gym26.Services
                 });
             }
         }
-
         public async Task AplicarPlantillaAsync(int plantillaId)
         {
             if (_db.State != ConnectionState.Open) _db.Open();

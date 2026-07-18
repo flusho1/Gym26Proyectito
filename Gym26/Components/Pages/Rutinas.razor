@@ -185,8 +185,7 @@
         await CargarRutinas();
         listaEjercicios = (await GymService.GetEjerciciosAsync(UserSession.UsuarioId)).ToList();
 
-        // Solo cargamos la lista completa si NO hay un PlanId,
-        // de lo contrario dejamos que CargarPlanEspecífico se encargue
+
         if (!PlanId.HasValue)
         {
             rutinaDelDia = listaEjercicios.Select(e => new EjercicioChecklist
