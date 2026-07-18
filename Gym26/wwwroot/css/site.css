@@ -17,13 +17,6 @@ html, body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* --- Sidebar Minimalista --- */
-.gym-sidebar {
-    background: var(--bg-sidebar);
-    border-right: 1px solid #1f1f1f;
-    height: 100vh;
-    padding-top: 2rem;
-}
 
 .brand h4 {
     color: #fff;
@@ -88,14 +81,7 @@ h2 {
 }
 
 @media (max-width: 768px) {
-    /* Ocultar el sidebar o convertirlo en una barra inferior/superior 
-       dependiendo de tu preferencia. Aquí lo colapsamos: */
-    .gym-sidebar {
-        height: auto;
-        border-right: none;
-        border-bottom: 1px solid #1f1f1f;
-        padding-top: 1rem;
-    }
+
 
     /* Ajustar las tarjetas para pantallas pequeñas */
     .card-gym {
