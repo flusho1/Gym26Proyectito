@@ -118,8 +118,10 @@ namespace Gym26.Services
             int plantillaId = await _db.QuerySingleAsync<int>(sqlPlantilla, new { Nombre = nombre, UsuarioId = usuarioId });
 
             // 2. Luego insertás cada detalle usando el ID que acabás de crear
-            string sqlDetalle = @"INSERT INTO plantilla_detalles (plantillaid, ejercicioid, series, repeticiones) 
-                          VALUES (@PlantillaId, @EjercicioId, @Series, @Repeticiones)";
+            string sqlDetalle = @"SELECT pd.*, e.Nombre AS NombreEjercicio, e.UrlGif 
+               FROM plantilla_detalles pd
+               INNER JOIN ejercicios e ON pd.ejercicioid = e.id
+               WHERE pd.plantillaid = @PlanId";
 
             foreach (var d in detalles)
             {

@@ -183,17 +183,21 @@
     protected override async Task OnInitializedAsync()
     {
         await CargarRutinas();
-        // Ahora (solucionado)
         listaEjercicios = (await GymService.GetEjerciciosAsync(UserSession.UsuarioId)).ToList();
-        rutinaDelDia = listaEjercicios.Select(e => new EjercicioChecklist
-        {
-            Id = e.Id,
-            Nombre = e.Nombre,
-            UrlGif = e.UrlGif, 
-            Completado = false
-        }).ToList();
 
-        if (PlanId.HasValue)
+        // Solo cargamos la lista completa si NO hay un PlanId,
+        // de lo contrario dejamos que CargarPlanEspecífico se encargue
+        if (!PlanId.HasValue)
+        {
+            rutinaDelDia = listaEjercicios.Select(e => new EjercicioChecklist
+            {
+                Id = e.Id,
+                Nombre = e.Nombre,
+                UrlGif = e.UrlGif,
+                Completado = false
+            }).ToList();
+        }
+        else
         {
             await CargarPlanEspecífico(PlanId.Value);
         }
@@ -203,7 +207,15 @@
     {
         var ejerciciosDelPlan = await GymService.GetEjerciciosByPlanAsync(planId);
 
-        
+        rutinaDelDia = ejerciciosDelPlan.Select(e => new EjercicioChecklist
+        {
+            Id = e.EjercicioId,
+            Nombre = e.NombreEjercicio, 
+            UrlGif = e.UrlGif,          // (Si esto te sigue dando error, agregalo al modelo también)
+            Completado = false
+        }).ToList();
+
+        StateHasChanged();
     }
 
     async Task CargarRutinas() => rutinas = await GymService.GetRutinasAsync();
@@ -214,7 +226,7 @@
     {
         if (nuevaRutina.EjercicioId > 0)
         {
-            nuevaRutina.UsuarioId = 1;
+            nuevaRutina.UsuarioId = UserSession.UsuarioId;
             await GymService.AgregarRutinaAsync(nuevaRutina);
 
             int seriesPrevias = nuevaRutina.Series;
