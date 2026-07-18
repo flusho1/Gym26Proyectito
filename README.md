@@ -42,7 +42,7 @@ La aplicación utiliza la siguiente estructura relacional para el seguimiento de
 
 1. **Clonar el repositorio:**
    ```bash
-   git clone [https://github.com/tu-usuario/gym26.git](https://github.com/flusho1/gym26.git)
+   git clone [https://github.com/flusho1/gym26.git](https://github.com/flusho1/gym26.git)
    ```
    Configurar variables: Define tu Connection String de Neon.tech en appsettings.json.
 
