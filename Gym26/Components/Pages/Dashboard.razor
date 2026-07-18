@@ -1,0 +1,94 @@
+﻿@page "/dashboard"
+@using Gym26.Models
+@using Gym26.Services
+@inject GymService GymService
+
+<div class="container-fluid pt-4">
+    <!-- SECCIÓN DE PRs -->
+    <h3 class="text-neon mb-4"><i class="bi bi-trophy"></i> Mis Mejores Marcas (PRs)</h3>
+    <div class="row mb-5">
+        @if (listaRecords == null)
+        {
+            <p class="text-info">Calculando potencia...</p>
+        }
+        else
+        {
+            @foreach (var record in listaRecords)
+            {
+                <div class="col-6 col-md-3 mb-3">
+                    <div class="card-gym border-neon text-center p-3">
+                        <small class="text-secondary text-uppercase">@record.Ejercicio</small>
+                        <h2 class="text-neon mt-2 mb-0">@record.MaxPeso <small class="fs-6">KG</small></h2>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <!-- SECCIÓN DE GRÁFICO -->
+    <h3 class="text-neon mb-4"><i class="bi bi-graph-up-arrow"></i> Evolución de Fuerza</h3>
+    <div class="card-gym p-4">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <DxComboBox Data="@listaEjercicios"
+                            TextFieldName="Nombre"
+                            ValueFieldName="Id"
+                            Value="@ejercicioSeleccionadoId"
+                            ValueChanged="@((int id) => CargarHistorial(id))"
+                            NullText="Selecciona un ejercicio..." />
+            </div>
+        </div>
+
+
+        <h3 class="text-neon mt-5 mb-4"><i class="bi bi-calendar-check"></i> Tu Constancia</h3>
+        <div class="card-gym p-3">
+            <DxCalendar Date="@DateTime.Today"
+                        CssClass="calendar-neon"
+                        SelectedDates="@diasEntrenados"
+                        SelectionMode="CalendarSelectionMode.Multiple" />
+        </div>
+
+        @if (historial != null && historial.Any())
+        {
+            <DxChart Data="@historial" style="height: 300px;">
+                @* Cambiamos TValue a "decimal" para coincidir con tu modelo *@
+                <DxChartLineSeries T="Rutina"
+                                   TArgument="string"
+                                   TValue="decimal"
+                                   Name="Peso (KG)"
+                                   ArgumentField="@(r => r.FechaFormateada)"
+                                   ValueField="@(r => r.PesoKG)" />
+                <DxChartTooltip Enabled="true" />
+            </DxChart>
+        }
+        else
+        {
+            <p class="text-secondary text-center">Selecciona un ejercicio para visualizar su progreso.</p>
+        }
+    </div>
+</div>
+
+@code {
+    IEnumerable<DateTime> diasEntrenados = Enumerable.Empty<DateTime>(); List<RecordPersonal> listaRecords = new();
+    List<Ejercicio> listaEjercicios = new();
+    List<Rutina> historial = new();
+    List<decimal> pesosRapidos = new() { 10, 20, 30, 40, 50, 60, 80, 100 };
+    int ejercicioSeleccionadoId;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        diasEntrenados = await GymService.GetDiasEntrenadosAsync();
+        listaRecords = await GymService.GetRecordsPersonalesAsync();
+        listaEjercicios = (await GymService.GetEjerciciosAsync()).ToList();
+    }
+
+    async Task CargarHistorial(int id)
+    {
+        ejercicioSeleccionadoId = id;
+        historial = await GymService.GetHistorialEjercicioAsync(id);
+        // Importante: forzamos el renderizado al cambiar el historial
+        StateHasChanged();
+    }
+}

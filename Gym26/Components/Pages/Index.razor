@@ -1,0 +1,28 @@
+﻿@page "/"
+@inject UserSession UserSession
+
+<PageTitle>Gym Pro Tracker | Dashboard</PageTitle>
+
+<div class="container-fluid" style="background-color: #0d0d0d; min-height: 100vh; padding: 2rem;">
+    <!-- ... (tu encabezado) ... -->
+
+    <DxGridLayout ColumnSpacing="15px" RowSpacing="15px">
+        <!-- ... (filas y columnas) ... -->
+        <Items>
+            <DxGridLayoutItem Row="0" Column="0">
+                <Template>
+                    <div class="p-3 border-start border-info border-5 shadow-lg"
+                         style="background-color: #1a1a1a; border-radius: 8px;">
+                        @* 2. Usa UserSession.Nombre en lugar de la variable local *@
+                        <h4 class="text-white m-0">Hola, <span style="color: #00e5ff;">@UserSession.Nombre</span></h4>
+                        <p class="text-secondary small mt-1">¿Qué grupo muscular toca entrenar hoy?</p>
+                    </div>
+                </Template>
+            </DxGridLayoutItem>
+        </Items>
+    </DxGridLayout>
+</div>
+
+@code {
+    // 3. Ya no necesitas la variable UsuarioActual, el servicio se encarga de la persistencia
+}

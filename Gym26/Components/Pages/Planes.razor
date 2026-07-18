@@ -1,0 +1,77 @@
+﻿@page "/planes"
+@using Gym26.Models
+@using Gym26.Services
+@inject GymService GymService
+@inject NavigationManager Navigation
+
+
+
+@if (listaPlantillas == null)
+{
+    <div class="spinner-border text-info"></div>
+}
+else
+{
+    @* <DxGrid Data="@listaPlantillas" KeyFieldName="Id">
+        <Columns>
+            <DxGridDataColumn FieldName="Nombre" Caption="Nombre" />
+            <DxGridDataColumn Caption="Tipo" Width="100px">
+                <CellDisplayTemplate>
+                    @{
+                        var p = (Plantilla)context.DataItem;
+                        <span class="badge @(p.UsuarioId == null ? "bg-secondary" : "bg-primary")">
+                            @(p.UsuarioId == null ? "Global" : "Personal")
+                        </span>
+                    }
+                </CellDisplayTemplate>
+            </DxGridDataColumn>
+        </Columns>
+    </DxGrid> *@
+}
+<div class="container-fluid pt-4">
+    <h3 class="text-neon mb-4">Mapa de Entrenamiento</h3>
+
+    <div class="row">
+        @if (planes == null)
+        {
+            <div class="spinner-border text-info"></div>
+        }
+        else
+        {
+            @foreach (var plan in planes)
+            {
+                <div class="card bg-dark text-white neon-border mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">@plan.NombreDia</h5>
+                        <p class="card-text">@plan.Descripcion</p>
+
+                        <button class="btn btn-outline-neon"
+                                @onclick="() => SeleccionarPlan(plan.Id)"
+                                @onclick:stopPropagation>
+                            Cargar Rutina
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private List<Plantilla> listaPlantillas;
+    List<PlanRutina> planes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Esto traerá los datos desde tu base de datos mediante el servicio
+        listaPlantillas = await GymService.GetPlantillasAsync();
+        planes = await GymService.GetPlanesAsync();
+
+    }
+
+    private async Task SeleccionarPlan(int id)
+    {
+        await Task.Delay(50);
+        Navigation.NavigateTo($"/rutinas/{id}");
+    }
+}

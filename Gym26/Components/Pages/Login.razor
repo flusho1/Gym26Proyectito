@@ -1,0 +1,46 @@
+﻿@page "/login"
+@using Gym26.Services
+@using Gym26.Models
+@inject GymService GymServiceInstance
+@inject UserSession UserSession
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<h3>¿Quién está entrenando hoy?</h3>
+
+@if (usuarios == null)
+{
+    <p>Cargando...</p>
+}
+else
+{
+    <div class="d-grid gap-2">
+        @foreach (var u in usuarios)
+        {
+            <button class="btn btn-primary btn-lg" @onclick="() => SeleccionarUsuario(u)">
+                @u.Nombre
+            </button>
+        }
+    </div>
+}
+
+@code {
+    List<Usuario>? usuarios;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var lista = await GymServiceInstance.GetUsuariosAsync();
+        usuarios = lista.ToList();
+    }
+
+    private async Task SeleccionarUsuario(Usuario u)
+    {
+        UserSession.UsuarioId = u.Id;
+        UserSession.Nombre = u.Nombre;
+
+        await JS.InvokeVoidAsync("localStorage.setItem", "UsuarioId", u.Id);
+        await JS.InvokeVoidAsync("localStorage.setItem", "NombreUsuario", u.Nombre);
+
+        Nav.NavigateTo("/");
+    }
+}

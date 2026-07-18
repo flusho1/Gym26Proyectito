@@ -1,0 +1,92 @@
+﻿@page "/ejercicios"
+@using Gym26.Models
+@using Gym26.Services
+@inject GymService GymService
+
+<div class="container-fluid pt-4">
+    <h3 class="text-neon mb-4">Gestión de Ejercicios</h3>
+
+    <!-- Formulario con estilo Card-Gym -->
+    <div class="card-gym mb-5">
+        <DxFormLayout>
+            <DxFormLayoutItem Caption="Nombre del Ejercicio:" ColSpanMd="6">
+                <DxTextBox @bind-Text="@nuevoEjercicio.Nombre" NullText="Ej: Press Banca" />
+            </DxFormLayoutItem>
+            <DxFormLayoutItem Caption="Grupo Muscular:" ColSpanMd="6">
+                <DxTextBox @bind-Text="@nuevoEjercicio.GrupoMuscular" NullText="Ej: Pecho" />
+            </DxFormLayoutItem>
+
+            <DxFormLayoutItem ColSpanMd="12" CssClass="text-end">
+                <DxButton Text="Guardar Ejercicio"
+                          CssClass="btn-neon"
+                          Click="Guardar"
+                          IconCssClass="bi bi-save" />
+            </DxFormLayoutItem>
+        </DxFormLayout>
+    </div>
+
+    <!-- Catálogo con diseño futurista -->
+    <h5 class="text-secondary mb-3">Catálogo Actual</h5>
+    @if (ejercicios == null)
+    {
+        <div class="spinner-border text-info" role="status"></div>
+    }
+    else
+    {
+        <div class="card-gym p-0">
+            <DxGrid Data="@ejercicios"
+                    CssClass="grid-futurista"
+                    PageSize="10"
+                    ShowFilterRow="true">
+                <Columns>
+                    <DxGridDataColumn FieldName="Nombre" Caption="Nombre del Ejercicio" />
+                    <DxGridDataColumn FieldName="GrupoMuscular" Caption="Grupo Muscular" />
+                </Columns>
+            </DxGrid>
+        </div>
+    }
+</div>
+
+<style>
+    /* Estilos específicos para este componente */
+    .grid-futurista {
+        background-color: transparent !important;
+    }
+
+        .grid-futurista .dxbl-grid-header {
+            background-color: #262626 !important;
+            color: var(--accent-neon) !important;
+            border-bottom: 2px solid var(--accent-neon) !important;
+        }
+
+    .dxbl-edit-input {
+        background-color: #1a1a1a !important;
+        border: 1px solid #444 !important;
+        color: white !important;
+    }
+</style>
+
+@code {
+    IEnumerable<Ejercicio>? ejercicios;
+    Ejercicio nuevoEjercicio = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarDatos();
+    }
+
+    async Task CargarDatos()
+    {
+        ejercicios = await GymService.GetEjerciciosAsync();
+    }
+
+    async Task Guardar()
+    {
+        if (!string.IsNullOrWhiteSpace(nuevoEjercicio.Nombre))
+        {
+            await GymService.AgregarEjercicioAsync(nuevoEjercicio);
+            nuevoEjercicio = new(); // Resetear formulario
+            await CargarDatos();    // Recargar tabla
+        }
+    }
+}

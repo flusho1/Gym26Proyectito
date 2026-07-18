@@ -1,0 +1,45 @@
+﻿<div class="rest-timer-container">
+    <div class="timer-display">@FormatTime(currentTime)</div>
+    <div class="timer-controls">
+        @if (!isRunning)
+        {
+            <button class="btn-neon-sm" @onclick="StartTimer">@((currentTime < 90 && currentTime > 0) ? "Continuar" : "Iniciar")</button>
+        }
+        else
+        {
+            <button class="btn-neon-sm-danger" @onclick="StopTimer">Pausa</button>
+        }
+        <button class="btn-neon-sm" @onclick="ResetTimer">Reset</button>
+    </div>
+</div>
+
+@code {
+    private int currentTime = 90;
+    private bool isRunning = false;
+    private System.Timers.Timer? timer;
+
+    protected override void OnInitialized()
+    {
+        timer = new System.Timers.Timer(1000);
+        timer.Elapsed += CountDown;
+    }
+
+    private void CountDown(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        if (currentTime > 0)
+        {
+            currentTime--;
+            InvokeAsync(StateHasChanged);
+        }
+        else
+        {
+            StopTimer();
+            // Opcional: Podrías disparar un sonido aquí
+        }
+    }
+
+    private void StartTimer() { isRunning = true; timer?.Start(); }
+    private void StopTimer() { isRunning = false; timer?.Stop(); }
+    private void ResetTimer() { StopTimer(); currentTime = 90; }
+    private string FormatTime(int seconds) => $"{seconds / 60:D2}:{seconds % 60:D2}";
+}

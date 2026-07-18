@@ -1,0 +1,237 @@
+﻿@page "/rutinas"
+@page "/rutinas/{PlanId:int}"
+@using Gym26.Models
+@using Gym26.Services
+@inject GymService GymService
+@inject IJSRuntime JS
+
+<div class="container-fluid pt-4">
+    <h3 class="text-neon mb-4">Registro de Entrenamiento</h3>
+    <RestTimer />
+
+    <!-- Checklist Integrado -->
+    <div class="card-gym mb-4 p-3">
+        <h4 class="text-neon mb-3">Checklist de hoy</h4>
+        <div class="d-flex flex-wrap gap-3">
+            @foreach (var item in rutinaDelDia)
+            {
+                <div class="d-flex align-items-center">
+                    <input type="checkbox"
+                           class="neon-checkbox"
+                           checked="@item.Completado"
+                           @onchange="@(() => { item.Completado = !item.Completado; if (item.Completado) OnEjercicioChanged(item.Id); })" />
+                    <span class="ms-2 me-2 @(item.Completado ? "text-decoration-line-through text-muted" : "text-light")">
+                        @item.Nombre
+                    </span>
+                    <!-- Botón de Técnica -->
+                    <button type="button" class="btn btn-sm btn-outline-info" @onclick="() => AbrirPopup(item)">
+                        <i class="bi bi-play-circle"></i>
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Formulario -->
+    <div class="card-gym mb-4">
+        <DxFormLayout>
+            <DxFormLayoutGroup Caption="Nuevo Registro" CssClass="text-neon">
+                <DxFormLayoutItem Caption="Ejercicio:" ColSpanMd="4">
+                    <DxComboBox Data="@listaEjercicios"
+                                Value="@nuevaRutina.EjercicioId"
+                                ValueChanged="@((int id) => OnEjercicioChanged(id))"
+                                ValueFieldName="Id"
+                                TextFieldName="Nombre"
+                                NullText="Selecciona un ejercicio..."
+                                ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto" />
+                    @if (ultimaMarca != null)
+                    {
+                        <div class="last-record-neon mt-2">
+                            <i class="bi bi-clock-history me-1"></i>
+                            <span>Última marca: <strong>@ultimaMarca.PesoKG KG</strong> / @ultimaMarca.Repeticiones reps</span>
+                        </div>
+                    }
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Series:" ColSpanMd="2">
+                    <DxSpinEdit @bind-Value="@nuevaRutina.Series" MinValue="1" MaxValue="20" />
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Repeticiones:" ColSpanMd="3">
+                    <DxTextBox @bind-Text="@nuevaRutina.Repeticiones" NullText="Ej: 10-12" />
+                </DxFormLayoutItem>
+                <DxFormLayoutItem Caption="Peso (KG):" ColSpanMd="3">
+                    <DxSpinEdit @bind-Value="@nuevaRutina.PesoKG" MinValue="0" DecimalPlaces="1" />
+                    <div class="quick-set-container mt-3">
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var peso in pesosRapidos)
+                            {
+                                <button type="button" class="btn btn-outline-neon" @onclick="() => AplicarPesoRapido(peso)">@peso KG</button>
+                            }
+                        </div>
+                    </div>
+                </DxFormLayoutItem>
+                <DxFormLayoutItem ColSpanMd="12" CssClass="text-end mt-2">
+                    <DxButton Text="Guardar Registro" Click="GuardarRutina" CssClass="btn-neon" IconCssClass="bi bi-save" />
+                </DxFormLayoutItem>
+            </DxFormLayoutGroup>
+        </DxFormLayout>
+    </div>
+
+    <!-- Sección de Historial con Modo Focus -->
+    <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+        <h4 class="text-neon">Historial</h4>
+        <button class="btn btn-sm btn-outline-info" @onclick="() => mostrarHistorial = !mostrarHistorial">
+            @(mostrarHistorial ? "Ocultar Historial" : "Mostrar Historial")
+        </button>
+    </div>
+
+    @if (mostrarHistorial)
+    {
+        @if (rutinas == null)
+        {
+            <div class="text-center p-5"><div class="spinner-border text-info"></div></div>
+        }
+        else
+        {
+            <div class="card-gym p-0">
+                <DxGrid Data="@rutinas" CssClass="grid-futurista" PageSize="10" ShowFilterRow="true">
+                    <Columns>
+                        <DxGridCommandColumn Width="80px" Caption="Acción">
+                            <CellDisplayTemplate>
+                                <DxButton IconCssClass="bi bi-trash" CssClass="btn-danger-neon" Click="@(() => EliminarRutina((context.DataItem as Rutina).Id))" />
+                            </CellDisplayTemplate>
+                        </DxGridCommandColumn>
+                        <DxGridDataColumn FieldName="FechaRegistro" Caption="Fecha" DisplayFormat="dd/MM HH:mm" />
+                        <DxGridDataColumn FieldName="NombreEjercicio" Caption="Ejercicio" />
+                        <DxGridDataColumn FieldName="Series" Caption="Series" />
+                        <DxGridDataColumn FieldName="Repeticiones" Caption="Reps" />
+                        <DxGridDataColumn FieldName="PesoKG" Caption="Peso (KG)" />
+                    </Columns>
+                </DxGrid>
+            </div>
+        }
+    }
+
+    <!-- Popup de Técnica -->
+    <DxPopup @bind-Visible="@mostrarPopup" HeaderText="@ejercicioSeleccionado?.Nombre">
+        <BodyTemplate>
+            @if (!string.IsNullOrEmpty(ejercicioSeleccionado?.UrlGif))
+            {
+                <div class="text-center">
+                    <img src="@ejercicioSeleccionado.UrlGif" class="img-fluid rounded" alt="Técnica" />
+                </div>
+            }
+            else
+            {
+                <p class="text-center">No hay video de técnica disponible para este ejercicio.</p>
+            }
+        </BodyTemplate>
+    </DxPopup>
+</div>
+
+@code {
+    bool mostrarPopup = false;
+    Ejercicio? ejercicioSeleccionado;
+    [Parameter] public int? PlanId { get; set; }
+    Rutina? ultimaMarca;
+    bool mostrarHistorial = true;
+
+
+    void AbrirPopup(EjercicioChecklist item)
+    {
+        ejercicioSeleccionado = new Ejercicio
+        {
+            Id = item.Id,
+            Nombre = item.Nombre,
+            UrlGif = item.UrlGif
+        };
+
+        mostrarPopup = true;
+    }
+
+    async Task OnEjercicioChanged(int id)
+    {
+        nuevaRutina.EjercicioId = id;
+        ultimaMarca = await GymService.GetUltimaMarcaAsync(id);
+
+        if (ultimaMarca != null)
+        {
+            nuevaRutina.PesoKG = ultimaMarca.PesoKG;
+            nuevaRutina.Repeticiones = ultimaMarca.Repeticiones;
+        }
+        else
+        {
+            nuevaRutina.PesoKG = 0;
+            nuevaRutina.Repeticiones = "";
+        }
+    }
+
+    public class EjercicioChecklist
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public bool Completado { get; set; }
+        public string? UrlGif { get; set; }
+    }
+
+    List<EjercicioChecklist> rutinaDelDia = new();
+    List<decimal> pesosRapidos = new() { 10, 20, 30, 40, 50, 60, 80, 100 };
+    IEnumerable<Rutina>? rutinas;
+    IEnumerable<Ejercicio>? listaEjercicios;
+    Rutina nuevaRutina = new() { FechaRegistro = DateTime.Now, Series = 3 };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarRutinas();
+        listaEjercicios = await GymService.GetEjerciciosAsync();
+        rutinaDelDia = listaEjercicios.Select(e => new EjercicioChecklist
+        {
+            Id = e.Id,
+            Nombre = e.Nombre,
+            UrlGif = e.UrlGif, 
+            Completado = false
+        }).ToList();
+
+        if (PlanId.HasValue)
+        {
+            await CargarPlanEspecífico(PlanId.Value);
+        }
+    }
+
+    async Task CargarPlanEspecífico(int planId)
+    {
+        var ejerciciosDelPlan = await GymService.GetEjerciciosByPlanAsync(planId);
+
+        foreach (var item in rutinaDelDia)
+        {
+            // Marcamos como completado solo si el ejercicio está en el plan
+            item.Completado = ejerciciosDelPlan.Any(e => e.EjercicioId == item.Id);
+        }
+    }
+
+    async Task CargarRutinas() => rutinas = await GymService.GetRutinasAsync();
+
+    void AplicarPesoRapido(decimal peso) => nuevaRutina.PesoKG = peso;
+
+    async Task GuardarRutina()
+    {
+        if (nuevaRutina.EjercicioId > 0)
+        {
+            nuevaRutina.UsuarioId = 1;
+            await GymService.AgregarRutinaAsync(nuevaRutina);
+
+            int seriesPrevias = nuevaRutina.Series;
+            nuevaRutina = new() { FechaRegistro = DateTime.Now, Series = seriesPrevias };
+            ultimaMarca = null;
+            await CargarRutinas();
+        }
+    }
+
+    async Task EliminarRutina(int id)
+    {
+        if (await JS.InvokeAsync<bool>("confirm", "¿Eliminar registro?"))
+        {
+            await GymService.EliminarRutinaAsync(id);
+            await CargarRutinas();
+        }
+    }
+}

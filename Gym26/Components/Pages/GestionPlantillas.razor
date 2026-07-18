@@ -1,0 +1,96 @@
+﻿@page "/gestionar-plantillas"
+@using Gym26.Models
+@using Gym26.Services
+@inject GymService GymService
+
+<div class="container-fluid pt-4">
+    <h3 class="text-neon mb-4">Crear Nueva Plantilla</h3>
+
+    <div class="card-gym mb-4">
+        <DxFormLayout>
+            <DxFormLayoutItem Caption="Nombre de la Plantilla:" ColSpanMd="12">
+                <DxTextBox @bind-Text="@nombrePlantilla" NullText="Ej: Rutina de Empuje" />
+            </DxFormLayoutItem>
+
+            <DxFormLayoutItem Caption="Ejercicio:" ColSpanMd="6">
+                <DxComboBox Data="@listaEjercicios" TextFieldName="Nombre" ValueFieldName="Id" @bind-Value="@ejercicioSeleccionadoId" NullText="Seleccionar..." />
+            </DxFormLayoutItem>
+
+            <DxFormLayoutItem Caption="Series:" ColSpanMd="3">
+                <DxSpinEdit @bind-Value="@seriesTemp" MinValue="1" MaxValue="10" />
+            </DxFormLayoutItem>
+
+            <DxFormLayoutItem Caption="Reps:" ColSpanMd="3">
+                <DxTextBox @bind-Text="@repsTemp" NullText="Ej: 10-12" />
+            </DxFormLayoutItem>
+
+            <DxFormLayoutItem ColSpanMd="12" CssClass="text-end">
+                <DxButton Text="Agregar al listado" Click="AgregarALista" CssClass="btn-neon" IconCssClass="bi bi-plus-lg" />
+            </DxFormLayoutItem>
+        </DxFormLayout>
+    </div>
+
+    @if (listaTemporal.Any())
+    {
+        <div class="card-gym p-0 mb-4">
+            <DxGrid Data="@listaTemporal" CssClass="grid-futurista">
+                <Columns>
+                    <DxGridDataColumn FieldName="NombreEjercicio" Caption="Ejercicio" />
+                    <DxGridDataColumn FieldName="Series" Caption="Series" />
+                    <DxGridDataColumn FieldName="Repeticiones" Caption="Reps" />
+                </Columns>
+            </DxGrid>
+        </div>
+
+        <DxButton Text="Guardar Plantilla Completa"
+                  Click="GuardarPlantilla"
+                  CssClass="btn-neon w-100"
+                  IconCssClass="bi bi-cloud-check" />
+    }
+</div>
+
+@code {
+    string nombrePlantilla;
+    int ejercicioSeleccionadoId;
+    int seriesTemp = 3;
+    string repsTemp = "10-12";
+
+    List<Ejercicio> listaEjercicios = new();
+    List<PlantillaDetalle> listaTemporal = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        listaEjercicios = (await GymService.GetEjerciciosAsync()).ToList();
+    }
+
+    void AgregarALista()
+    {
+        if (ejercicioSeleccionadoId == 0) return;
+
+        var ejercicio = listaEjercicios.FirstOrDefault(e => e.Id == ejercicioSeleccionadoId);
+
+        listaTemporal.Add(new PlantillaDetalle
+        {
+            EjercicioId = ejercicioSeleccionadoId,
+            NombreEjercicio = ejercicio?.Nombre,
+            Series = seriesTemp,
+            Repeticiones = repsTemp
+        });
+
+        // Limpiamos el selector después de agregar
+        ejercicioSeleccionadoId = 0;
+        StateHasChanged();
+    }
+
+    async Task GuardarPlantilla()
+    {
+        if (string.IsNullOrEmpty(nombrePlantilla) || !listaTemporal.Any()) return;
+
+        await GymService.GuardarPlantillaCompletaAsync(nombrePlantilla, listaTemporal);
+
+        // Limpiar formulario y lista
+        nombrePlantilla = string.Empty;
+        listaTemporal.Clear();
+        StateHasChanged();
+    }
+}

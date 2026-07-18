@@ -1,0 +1,132 @@
+﻿:root {
+    --bg-color: #0a0a0a; /* Negro más profundo */
+    --card-bg: #121212; /* Gris casi negro */
+    --accent: #4a4a4a; /* Gris acero (reemplaza al neón) */
+    --accent-hover: #707070; /* Gris más claro para interacción */
+    --text-primary: #e0e0e0;
+    --text-secondary: #888888;
+    --border-radius: 6px; /* Menos redondeado, más serio */
+    --border-color: #222222;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Tarjetas */
+.card-gym {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    transition: border-color 0.2s;
+}
+
+    .card-gym:hover {
+        border-color: #444; /* Solo un sutil cambio de gris */
+    }
+
+/* Botones estilo minimalista */
+.btn-neon {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--text-primary);
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+}
+
+    .btn-neon:hover {
+        background: var(--accent);
+        color: #fff;
+        box-shadow: none; /* Eliminamos el brillo neón */
+    }
+
+/* Scroll minimalista */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #222;
+    border-radius: 3px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #333;
+    }
+
+/* Ajuste de controles (sin neón) */
+.dxbl-grid-table, .dxbl-edit-input {
+    background-color: #121212 !important;
+    color: white !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+/* Timer - Ahora elegante, no brillante */
+.rest-timer-container {
+    background: #121212;
+    border: 1px solid var(--border-color);
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+}
+
+.timer-display {
+    font-family: 'SFMono-Regular', monospace;
+    font-size: 1.4rem;
+    color: #fff;
+}
+
+/* Gráficos limpios */
+.dx-chart-series-line {
+    stroke: #666 !important; /* Línea gris en lugar de cian */
+    stroke-width: 2px !important;
+}
+
+/* Checkbox discreto */
+.neon-checkbox {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #444;
+    background: #1a1a1a;
+    border-radius: 3px;
+}
+
+    .neon-checkbox:checked {
+        background-color: #555;
+    }
+
+/* Estructura */
+.app-layout {
+    display: flex;
+    height: 100vh;
+}
+
+.gym-sidebar {
+    width: 320px;
+    flex-shrink: 0; 
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+}
+
+.main-container {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+#sidebar[b-m7oxgucqkq] {
+    min-width: 20rem;
+    flex-shrink: 0;
+    background: var(--bg-sidebar);
+}
+
+
+.text-secondary{
+    color:white !important;
+}

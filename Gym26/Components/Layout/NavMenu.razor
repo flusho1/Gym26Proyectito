@@ -1,0 +1,36 @@
+﻿@inject UserSession UserSession
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+
+<div id="sidebar" class="gym-sidebar">
+    <DxMenu Orientation="Orientation.Vertical" CssClass="menu-futurista w-100">
+        <Items>
+            <button @onclick="CerrarSesion" class="btn btn-outline-danger btn-sm">
+                Cambiar Usuario
+            </button>
+            <DxMenuItem NavigateUrl="/" Text="Inicio" CssClass="menu-item" IconCssClass="bi bi-house-door" />
+            <DxMenuItem NavigateUrl="/dashboard" Text="Dashboard (PRs)" CssClass="menu-item" IconCssClass="bi bi-trophy" />
+            <DxMenuItem NavigateUrl="/rutinas" Text="Mis Rutinas" CssClass="menu-item" IconCssClass="bi bi-graph-up" />
+            <DxMenuItem NavigateUrl="/planes" Text="Planes de Entrenamiento" CssClass="menu-item" IconCssClass="bi bi-calendar-check" />
+            <DxMenuItem NavigateUrl="/gestionar-plantillas" Text="Plantillas" CssClass="menu-item" IconCssClass="bi bi-gear" />
+            <DxMenuItem NavigateUrl="/ejercicios" Text="Ejercicios" CssClass="menu-item" IconCssClass="bi bi-clipboard-pulse" />
+            <DxMenuItem NavigateUrl="/gestion-ejercicios" Text="Gestionar Ejercicios" CssClass="menu-item" IconCssClass="bi bi-pencil-square" />
+        </Items>
+    </DxMenu>
+</div>
+@code {
+    [SupplyParameterFromQuery(Name = "toggledSidebar")]
+    public bool ToggledSidebar { get; set; }
+
+    private async Task CerrarSesion()
+    {
+        UserSession.UsuarioId = 0;
+        UserSession.Nombre = string.Empty;
+
+        await JS.InvokeVoidAsync("localStorage.removeItem", "UsuarioId");
+        await JS.InvokeVoidAsync("localStorage.removeItem", "NombreUsuario");
+
+        Nav.NavigateTo("/login");
+    }
+}

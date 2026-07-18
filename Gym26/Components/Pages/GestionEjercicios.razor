@@ -1,0 +1,52 @@
+﻿@page "/gestion-ejercicios"
+@using Gym26.Models
+@using Gym26.Services
+@using DevExpress.Blazor
+@inject GymService GymService
+
+<h3 class="mb-4">Gestión de Ejercicios</h3>
+
+@if (listaEjercicios == null)
+{
+    <p><em>Cargando ejercicios...</em></p>
+}
+else
+{
+    <DxGrid Data="@listaEjercicios"
+            EditMode="GridEditMode.EditRow"
+            EditModelSaving="OnEditModelSaving">
+        <Columns>
+            <DxGridCommandColumn Width="100px" />
+            <DxGridDataColumn FieldName="Nombre" />
+            <DxGridDataColumn FieldName="GrupoMuscular" />
+            <DxGridDataColumn FieldName="UrlGif" Caption="Link del GIF">
+                <CellDisplayTemplate>
+                    <a href="@context.Value" target="_blank">Ver GIF</a>
+                </CellDisplayTemplate>
+            </DxGridDataColumn>
+        </Columns>
+    </DxGrid>
+}
+
+@code {
+    IEnumerable<Ejercicio>? listaEjercicios;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarDatos();
+    }
+
+    async Task CargarDatos()
+    {
+        listaEjercicios = await GymService.GetEjerciciosAsync();
+    }
+
+    async Task OnEditModelSaving(GridEditModelSavingEventArgs e)
+    {
+        var ejercicioEditado = (Ejercicio)e.EditModel;
+
+        await GymService.ActualizarEjercicioAsync(ejercicioEditado);
+
+        await CargarDatos();
+    }
+}

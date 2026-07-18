@@ -1,0 +1,77 @@
+﻿@inherits LayoutComponentBase
+@inject UserSession UserSession
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<div class="app-layout">
+    <!-- Barra Lateral -->
+    <aside class="gym-sidebar">
+        <div class="brand p-3 text-center">
+            <h4 class="text-neon" style="margin: 0;">GYM APP</h4>
+        </div>
+        <NavMenu />
+    </aside>
+
+    <!-- Contenedor de contenido principal -->
+    <div class="main-container">
+        <div class="user-bar">
+            @if (UserSession.UsuarioId != 0)
+            {
+                <span>Entrenando: <strong>@UserSession.Nombre</strong></span>
+                <button class="btn btn-link text-danger" @onclick="CerrarSesion">Salir</button>
+            }
+        </div>
+
+        @if (isInitialized)
+        {
+            <main class="content">
+                @Body
+            </main>
+        }
+        else
+        {
+            <div class="loading-screen">Cargando perfil...</div>
+        }
+    </div>
+</div>
+
+@code {
+    private bool isInitialized = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                var idGuardado = await JS.InvokeAsync<string>("localStorage.getItem", "UsuarioId");
+                if (!string.IsNullOrEmpty(idGuardado))
+                {
+                    UserSession.UsuarioId = int.Parse(idGuardado);
+                    UserSession.Nombre = await JS.InvokeAsync<string>("localStorage.getItem", "NombreUsuario");
+                }
+            }
+            catch { /* Manejo silencioso */ }
+
+            isInitialized = true;
+            StateHasChanged();
+
+            if (UserSession.UsuarioId == 0 && Nav.ToBaseRelativePath(Nav.Uri) != "login")
+            {
+                await Task.Delay(10); 
+                Nav.NavigateTo("/login");
+            }
+        }
+    }
+
+    private async Task CerrarSesion()
+    {
+        UserSession.UsuarioId = 0;
+        UserSession.Nombre = string.Empty;
+
+        await JS.InvokeVoidAsync("localStorage.removeItem", "UsuarioId");
+        await JS.InvokeVoidAsync("localStorage.removeItem", "NombreUsuario");
+
+        Nav.NavigateTo("/login");
+    }
+}

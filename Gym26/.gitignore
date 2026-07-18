@@ -1,0 +1,16 @@
+# Archivos de configuración
+appsettings.json
+appsettings.*.json
+
+# Carpetas de compilación
+bin/
+obj/
+
+# Archivos de usuario y secretos
+.vs/
+.vscode/
+usersecrets.json
+*.user
+*.suo
+*.userosscache
+*.sln.docstates

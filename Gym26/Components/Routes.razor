@@ -1,0 +1,14 @@
+﻿<Router AppAssembly="@typeof(Program).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <PageTitle>Página no encontrada</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <div class="d-flex justify-content-center align-items-center vh-100 text-white">
+                <h1>404 - ¡Esta ruta no existe en el Gym!</h1>
+            </div>
+        </LayoutView>
+    </NotFound>
+</Router>
