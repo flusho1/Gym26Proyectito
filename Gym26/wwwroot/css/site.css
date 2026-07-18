@@ -42,6 +42,18 @@ html, body {
     border-left: 2px solid transparent;
 }
 
+.main-container {
+    width: 100%;
+    overflow-x: hidden; /* Evita scroll horizontal innecesario */
+}
+
+@media (max-width: 768px) {
+    .menu-item {
+        padding: 12px 20px !important; /* Ligeramente más compacto */
+        font-size: 0.75rem;
+    }
+}
+
     .menu-item:hover {
         background: var(--hover-bg) !important;
         color: #fff !important;
@@ -118,4 +130,17 @@ h2 {
 ::-webkit-scrollbar-thumb {
     background: #333;
     border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+    .app-layout { /* Asegúrate de que tu contenedor padre tenga esta clase */
+        flex-direction: column;
+    }
+
+    .gym-sidebar {
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid #1f1f1f;
+        padding-top: 1rem;
+    }
 }

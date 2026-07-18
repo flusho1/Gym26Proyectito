@@ -123,13 +123,23 @@ body {
 /* Si tu layout es flex, asegura que en móvil sea columna */
 @media (max-width: 768px) {
     .app-layout {
-        flex-direction: column;
+        flex-direction: column; /* Apila el menú arriba y el contenido abajo */
+        height: auto; /* Cambia de 100vh a auto */
     }
 
     .gym-sidebar {
-        width: 100%;
+        height: auto; /* Cambiamos de 100vh a auto para que se ajuste a su contenido */
+        max-height: 300px; /* Limita la altura del menú para que no cubra todo */
+        overflow-y: auto; /* Permite scroll interno solo si el menú es muy largo */
         border-right: none;
-        border-bottom: 1px solid var(--border-color);
+        border-bottom: 1px solid #1f1f1f;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .main-container {
+        flex: 1; /* Ocupa el espacio restante */
+        overflow-y: visible; /* Permite que la página se desplace naturalmente */
     }
 }
 
