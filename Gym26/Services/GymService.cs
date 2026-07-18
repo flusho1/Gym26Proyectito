@@ -78,17 +78,22 @@ namespace Gym26.Services
             using var transaction = _db.BeginTransaction();
             try
             {
+                // 1. Cambiamos SCOPE_IDENTITY() por RETURNING id para PostgreSQL
+                // 2. Usamos 'plantillas' en minúsculas y 'usuarioid' para coincidir con la DB
                 string sqlInsertPlantilla = @"
-            INSERT INTO Plantillas (Nombre, UsuarioId) 
-            VALUES (@Nombre, @UsuarioId); 
-            SELECT CAST(SCOPE_IDENTITY() AS INT);";
-                int plantillaId = await _db.ExecuteScalarAsync<int>(
-            sqlInsertPlantilla,
-            new { Nombre = nombre, UsuarioId = _session.UsuarioId },
-            transaction);
+            INSERT INTO plantillas (nombre, usuarioid) 
+            VALUES (@Nombre, @UsuarioId) 
+            RETURNING id;";
 
-                string sqlInsertDetalle = @"INSERT INTO PlantillaDetalles (PlantillaId, EjercicioId, Series, Repeticiones) 
-                                            VALUES (@PlantillaId, @EjercicioId, @Series, @Repeticiones)";
+                int plantillaId = await _db.ExecuteScalarAsync<int>(
+                    sqlInsertPlantilla,
+                    new { Nombre = nombre, UsuarioId = _session.UsuarioId },
+                    transaction);
+
+                // 3. Asegúrate de que la tabla se llame 'plantilla_detalle' y sus columnas no tengan guiones
+                string sqlInsertDetalle = @"
+            INSERT INTO plantilla_detalle (plantillaid, ejercicioid, series, repeticiones) 
+            VALUES (@PlantillaId, @EjercicioId, @Series, @Repeticiones)";
 
                 foreach (var detalle in detalles)
                 {
@@ -98,7 +103,11 @@ namespace Gym26.Services
                 transaction.Commit();
                 return plantillaId;
             }
-            catch { transaction.Rollback(); throw; }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
         }
 
         public async Task AplicarPlantillaAsync(int plantillaId)
