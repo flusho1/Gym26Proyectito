@@ -110,14 +110,13 @@ namespace Gym26.Services
 
         public async Task GuardarPlantillaCompletaAsync(string nombre, List<PlantillaDetalle> detalles, int usuarioId)
         {
-            // 1. Insertar la cabecera
             string sqlPlantilla = @"INSERT INTO plantillas (nombre, usuarioid) 
                             VALUES (@Nombre, @UsuarioId) 
                             RETURNING id;";
 
             int plantillaId = await _db.QuerySingleAsync<int>(sqlPlantilla, new { Nombre = nombre, UsuarioId = usuarioId });
 
-            
+            // Apuntamos a la tabla correcta: plantilla_detalle
             string sqlInsertDetalle = @"INSERT INTO plantilla_detalle (plantillaid, ejercicioid, series, repeticiones) 
                                 VALUES (@PlantillaId, @EjercicioId, @Series, @Repeticiones);";
 
