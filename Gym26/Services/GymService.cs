@@ -25,9 +25,15 @@ namespace Gym26.Services
             return result > 0;
         }
 
-        public async Task<IEnumerable<Ejercicio>> GetEjerciciosAsync()
+        // En GymService.cs
+        public async Task<IEnumerable<Ejercicio>> GetEjerciciosAsync(int usuarioId)
         {
-            return await _db.QueryAsync<Ejercicio>("SELECT id, nombre, grupomuscular, urlgif FROM ejercicios");
+            // Filtramos por el usuario específico O los ejercicios globales (NULL)
+            string sql = @"SELECT id, nombre, grupomuscular, urlgif 
+                   FROM ejercicios 
+                   WHERE usuarioid = @UsuarioId OR usuarioid IS NULL";
+
+            return await _db.QueryAsync<Ejercicio>(sql, new { UsuarioId = usuarioId });
         }
 
         public async Task GuardarEjercicioAsync(Ejercicio nuevoEjercicio, int usuarioId)
