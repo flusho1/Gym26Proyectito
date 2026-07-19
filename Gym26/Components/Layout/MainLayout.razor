@@ -34,11 +34,13 @@
         }
     </div>
 
-    <!-- Barra Inferior (Solo Móvil) -->
     @if (UserSession.UsuarioId != 0)
     {
         <div class="mobile-bottom-nav">
-            <NavMenu Orientation="Orientation.Horizontal" />
+            <!-- El CSS buscará esta estructura -->
+            <div class="menu-wrapper-mobile w-100">
+                <NavMenu Orientation="Orientation.Horizontal" />
+            </div>
         </div>
     }
 </div>

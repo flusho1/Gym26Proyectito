@@ -1,35 +1,4 @@
-﻿:root {
-    --bg-main: #0a0a0a;
-    --bg-sidebar: #121212;
-    --bg-card: #1a1a1a;
-    --text-primary: #e0e0e0;
-    --text-muted: #888888;
-    --border-color: #222222;
-}
-
-html, body {
-    margin: 0;
-    height: 100%;
-    background-color: var(--bg-main);
-    color: var(--text-primary);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-
-/* --- Layout Principal --- */
-.app-layout {
-    display: flex;
-    min-height: 100vh;
-}
-
-.main-container {
-    flex: 1;
-    width: 100%;
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-/* --- Responsive Sidebar vs Bottom Nav --- */
+﻿/* --- Desktop: Sidebar --- */
 @media (min-width: 769px) {
     .gym-sidebar {
         width: 250px;
@@ -42,37 +11,40 @@ html, body {
     }
 }
 
+/* --- Mobile: Bottom Nav --- */
 @media (max-width: 768px) {
     .gym-sidebar {
         display: none !important;
     }
 
     .mobile-bottom-nav {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: var(--bg-card);
-        border-top: 1px solid var(--border-color);
-        z-index: 1000;
-        padding: 5px 0;
-        justify-content: space-around;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+        display: flex !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 65px !important;
+        background: var(--bg-card) !important;
+        z-index: 9999 !important;
+        border-top: 1px solid var(--border-color) !important;
+        overflow-x: auto !important;
     }
 
-    .main-container {
-        padding-bottom: 70px;
-    }
-}
+        .mobile-bottom-nav .dxbl-menu,
+        .mobile-bottom-nav .dxbl-col-auto {
+            width: 100% !important;
+            display: flex !important;
+            justify-content: space-around !important;
+            align-items: center !important;
+            background: transparent !important;
+        }
 
-/* --- User Bar y misc --- */
-.user-bar {
-    background: #0d0d0d;
-    padding: 10px 20px;
-    border-bottom: 1px solid #1f1f1f;
-    font-size: 0.85rem;
-    color: var(--text-muted);
+        .mobile-bottom-nav .dxbl-menu-item {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
 }
 
 /* Ocultar marca DevExpress */

@@ -15,7 +15,6 @@ html, body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* --- Layout Principal --- */
 .app-layout {
     display: flex;
     min-height: 100vh;
@@ -29,54 +28,10 @@ html, body {
     flex-direction: column;
 }
 
-/* --- Responsive Sidebar vs Bottom Nav --- */
-@media (min-width: 769px) {
-    .gym-sidebar {
-        width: 250px;
-        background: var(--bg-sidebar);
-        border-right: 1px solid var(--border-color);
-    }
-
-    .mobile-bottom-nav {
-        display: none !important;
-    }
-}
-
-@media (max-width: 768px) {
-    .gym-sidebar {
-        display: none !important;
-    }
-
-    .mobile-bottom-nav {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: var(--bg-card);
-        border-top: 1px solid var(--border-color);
-        z-index: 1000;
-        padding: 5px 0;
-        justify-content: space-around;
-        align-items: center;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
-    }
-
-    .main-container {
-        padding-bottom: 70px;
-    }
-}
-
-/* --- User Bar y misc --- */
 .user-bar {
     background: #0d0d0d;
     padding: 10px 20px;
     border-bottom: 1px solid #1f1f1f;
     font-size: 0.85rem;
     color: var(--text-muted);
-}
-
-/* Ocultar marca DevExpress */
-dx-license {
-    display: none !important;
 }
