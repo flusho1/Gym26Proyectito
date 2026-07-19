@@ -4,7 +4,7 @@
 @inject IJSRuntime JS
 
 <div class="app-layout">
-    <!-- Barra Lateral -->
+    <!-- Barra Lateral (Escritorio) -->
     <aside class="gym-sidebar">
         <div class="brand p-3 text-center">
             <h4 class="text-neon" style="margin: 0;">GYM APP</h4>
@@ -12,7 +12,7 @@
         <NavMenu />
     </aside>
 
-    <!-- Contenedor de contenido principal -->
+    <!-- Contenedor principal -->
     <div class="main-container">
         <div class="user-bar">
             @if (UserSession.UsuarioId != 0)
@@ -33,6 +33,14 @@
             <div class="loading-screen">Cargando perfil...</div>
         }
     </div>
+
+    <!-- Barra Inferior (Solo Móvil) -->
+    @if (UserSession.UsuarioId != 0)
+    {
+        <div class="mobile-bottom-nav">
+            <NavMenu />
+        </div>
+    }
 </div>
 
 @code {

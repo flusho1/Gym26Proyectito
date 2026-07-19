@@ -1,217 +1,81 @@
 ﻿:root {
-    --bg-color: #0a0a0a; /* Negro más profundo */
-    --card-bg: #121212; /* Gris casi negro */
-    --accent: #4a4a4a; /* Gris acero (reemplaza al neón) */
-    --accent-hover: #707070; /* Gris más claro para interacción */
+    --bg-main: #0a0a0a;
+    --bg-sidebar: #121212;
+    --bg-card: #1a1a1a;
     --text-primary: #e0e0e0;
-    --text-secondary: #888888;
-    --border-radius: 6px; /* Menos redondeado, más serio */
+    --text-muted: #888888;
     --border-color: #222222;
 }
 
-body {
-    background-color: var(--bg-color);
+html, body {
+    margin: 0;
+    height: 100%;
+    background-color: var(--bg-main);
     color: var(--text-primary);
-    font-family: 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* Tarjetas */
-.card-gym {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    transition: border-color 0.2s;
-}
-
-    .card-gym:hover {
-        border-color: #444; /* Solo un sutil cambio de gris */
-    }
-
-/* Botones estilo minimalista */
-.btn-neon {
-    background: transparent;
-    border: 1px solid var(--accent);
-    color: var(--text-primary);
-    padding: 10px 20px;
-    border-radius: var(--border-radius);
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 1px;
-    transition: all 0.3s;
-}
-
-    .btn-neon:hover {
-        background: var(--accent);
-        color: #fff;
-        box-shadow: none; /* Eliminamos el brillo neón */
-    }
-
-/* Scroll minimalista */
-::-webkit-scrollbar {
-    width: 6px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #222;
-    border-radius: 3px;
-}
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: #333;
-    }
-
-/* Ajuste de controles (sin neón) */
-.dxbl-grid-table, .dxbl-edit-input {
-    background-color: #121212 !important;
-    color: white !important;
-    border: 1px solid var(--border-color) !important;
-}
-
-/* Timer - Ahora elegante, no brillante */
-.rest-timer-container {
-    background: #121212;
-    border: 1px solid var(--border-color);
-    padding: 8px 16px;
-    border-radius: var(--border-radius);
-}
-
-.timer-display {
-    font-family: 'SFMono-Regular', monospace;
-    font-size: 1.4rem;
-    color: #fff;
-}
-
-/* Gráficos limpios */
-.dx-chart-series-line {
-    stroke: #666 !important; /* Línea gris en lugar de cian */
-    stroke-width: 2px !important;
-}
-
-/* Checkbox discreto */
-.neon-checkbox {
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 1px solid #444;
-    background: #1a1a1a;
-    border-radius: 3px;
-}
-
-    .neon-checkbox:checked {
-        background-color: #555;
-    }
-
-/* Estructura */
+/* --- Layout Principal --- */
 .app-layout {
     display: flex;
-    height: 100vh;
-}
-
-.gym-sidebar {
-    width: 320px;
-    flex-shrink: 0; 
-    background: var(--bg-sidebar);
-    border-right: 1px solid var(--border-color);
+    min-height: 100vh;
 }
 
 .main-container {
+    flex: 1;
     width: 100%;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Si tu layout es flex, asegura que en móvil sea columna */
-@media (max-width: 768px) {
-    .app-layout {
-        flex-direction: column; /* Apila el menú arriba y el contenido abajo */
-        height: auto; /* Cambia de 100vh a auto */
+/* --- Responsive Sidebar vs Bottom Nav --- */
+@media (min-width: 769px) {
+    .gym-sidebar {
+        width: 250px;
+        background: var(--bg-sidebar);
+        border-right: 1px solid var(--border-color);
     }
 
+    .mobile-bottom-nav {
+        display: none !important;
+    }
+}
+
+@media (max-width: 768px) {
     .gym-sidebar {
-        height: auto; /* Cambiamos de 100vh a auto para que se ajuste a su contenido */
-        max-height: 300px; /* Limita la altura del menú para que no cubra todo */
-        overflow-y: auto; /* Permite scroll interno solo si el menú es muy largo */
-        border-right: none;
-        border-bottom: 1px solid #1f1f1f;
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
+        display: none !important;
+    }
+
+    .mobile-bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: var(--bg-card);
+        border-top: 1px solid var(--border-color);
+        z-index: 1000;
+        padding: 5px 0;
+        justify-content: space-around;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
     }
 
     .main-container {
-        flex: 1; /* Ocupa el espacio restante */
-        overflow-y: visible; /* Permite que la página se desplace naturalmente */
+        padding-bottom: 70px;
     }
 }
 
-#sidebar[b-m7oxgucqkq] {
-    min-width: 20rem;
-    flex-shrink: 0;
-    background: var(--bg-sidebar);
-}
-
-
-.text-secondary{
-    color:white !important;
-}
-
-
-/* --- Mejoras para Mobile --- */
-@media (max-width: 768px) {
-    .container-fluid {
-        padding-left: 15px !important;
-        padding-right: 15px !important;
-    }
-
-    /* Botones más grandes para dedos */
-    .btn-neon {
-        padding: 12px 24px;
-        font-size: 0.9rem;
-        width: 100%; /* Botón de ancho completo en móvil */
-        margin-bottom: 10px;
-    }
-
-    /* Ajustar las tarjetas para que no se sientan apretadas */
-    .card-gym {
-        padding: 1rem;
-    }
-
-    /* Ajuste de fuentes para mejor lectura en pantalla pequeña */
-    h3 {
-        font-size: 1.25rem;
-    }
-
-    h4 {
-        font-size: 1.1rem;
-    }
-}
-
-/* --- Mejoras de Checkbox (Táctil) --- */
-.neon-checkbox {
-    width: 24px !important; /* Más grande para poder tocarlo fácil */
-    height: 24px !important;
-    margin-right: 12px;
-    cursor: pointer;
-}
-
-/* --- Estilo de Texto Minimalista --- */
-.text-neon {
-    color: var(--text-primary);
-    font-weight: 500;
-    text-transform: uppercase;
+/* --- User Bar y misc --- */
+.user-bar {
+    background: #0d0d0d;
+    padding: 10px 20px;
+    border-bottom: 1px solid #1f1f1f;
     font-size: 0.85rem;
-    letter-spacing: 0.5px;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 8px;
-    margin-bottom: 16px;
+    color: var(--text-muted);
 }
 
-
-/* Hacer las filas del Grid más altas para que sean "touch-friendly" */
-.dxbl-grid-cell {
-    padding: 12px 8px !important;
-}
-
-/* Asegurar que el ComboBox no sea demasiado pequeño */
-.dxbl-combobox, .dxbl-spin-edit {
-    height: 45px !important; /* Estándar móvil recomendado */
+/* Ocultar marca DevExpress */
+dx-license {
+    display: none !important;
 }
