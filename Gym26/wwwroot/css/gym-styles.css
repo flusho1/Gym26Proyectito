@@ -1,58 +1,57 @@
-﻿/* --- Desktop: Sidebar --- */
-@media (min-width: 769px) {
-    .gym-sidebar {
-        width: 250px;
-        background: var(--bg-sidebar);
-        border-right: 1px solid var(--border-color);
-    }
-
-    .mobile-bottom-nav {
-        display: none !important;
-    }
-}
-
-/* --- Mobile: Bottom Nav --- */
-@media (max-width: 768px) {
-    .gym-sidebar {
-        display: none !important;
-    }
-
-    .mobile-bottom-nav {
-        display: flex !important;
-        position: fixed !important;
-        bottom: 0 !important;
-        width: 100% !important;
-        height: 65px !important;
-        background: var(--bg-card) !important;
-        z-index: 9999 !important;
-        border-top: 1px solid var(--border-color) !important;
-        overflow-x: auto !important;
-    }
-
-        .mobile-bottom-nav .dxbl-menu,
-        .mobile-bottom-nav .dxbl-col-auto {
-            width: 100% !important;
-            display: flex !important;
-            justify-content: space-around !important;
-            align-items: center !important;
-            background: transparent !important;
-        }
-
-        .mobile-bottom-nav .dxbl-menu-item {
-            flex: 1 !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-        }
-}
-
-/* Ocultar marca DevExpress */
-dx-license {
+﻿dx-license {
     display: none !important;
 }
 
-/* Anular el comportamiento de ocultado de DevExpress */
-.dxbl-menu[data-dx-menu-mobile] > .dxbl-menu-bar {
-    display: flex !important;
+/* Botón Flotante */
+.fab-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    font-size: 24px;
+    z-index: 9999;
+    cursor: pointer;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    width: 90%;
+    text-align: center;
+}
+
+.modal-nav a {
+    display: block;
+    color: white;
+    font-size: 1.5rem;
+    padding: 15px;
+    text-decoration: none;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 3rem;
+    position: absolute;
+    top: 20px;
+    right: 20px;
 }

@@ -36,11 +36,8 @@
 
     @if (UserSession.UsuarioId != 0)
     {
-        <div class="mobile-bottom-nav">
-            <!-- El CSS buscará esta estructura -->
-            <div class="menu-wrapper-mobile w-100">
-                <NavMenu Orientation="Orientation.Horizontal" />
-            </div>
+        <div class="d-md-none">
+            <FloatingMenu />
         </div>
     }
 </div>
