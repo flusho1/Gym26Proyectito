@@ -6,10 +6,10 @@
 <div class="app-layout">
     <!-- Barra Lateral (Escritorio) -->
     <aside class="gym-sidebar">
-        <div class="brand p-3 text-center">
-            <h4 class="text-neon" style="margin: 0;">GYM APP</h4>
-        </div>
-        <NavMenu />
+        @if (UserSession.UsuarioId != 0)
+        {
+            <NavMenu Orientation="Orientation.Vertical" />
+        }
     </aside>
 
     <!-- Contenedor principal -->
@@ -38,7 +38,7 @@
     @if (UserSession.UsuarioId != 0)
     {
         <div class="mobile-bottom-nav">
-            <NavMenu />
+            <NavMenu Orientation="Orientation.Horizontal" />
         </div>
     }
 </div>
@@ -59,14 +59,13 @@
                     UserSession.Nombre = await JS.InvokeAsync<string>("localStorage.getItem", "NombreUsuario");
                 }
             }
-            catch { /* Manejo silencioso */ }
+            catch { }
 
             isInitialized = true;
             StateHasChanged();
 
             if (UserSession.UsuarioId == 0 && Nav.ToBaseRelativePath(Nav.Uri) != "login")
             {
-                await Task.Delay(10); 
                 Nav.NavigateTo("/login");
             }
         }
@@ -76,10 +75,8 @@
     {
         UserSession.UsuarioId = 0;
         UserSession.Nombre = string.Empty;
-
         await JS.InvokeVoidAsync("localStorage.removeItem", "UsuarioId");
         await JS.InvokeVoidAsync("localStorage.removeItem", "NombreUsuario");
-
         Nav.NavigateTo("/login");
     }
 }
