@@ -51,3 +51,8 @@
 dx-license {
     display: none !important;
 }
+
+/* Anular el comportamiento de ocultado de DevExpress */
+.dxbl-menu[data-dx-menu-mobile] > .dxbl-menu-bar {
+    display: flex !important;
+}
